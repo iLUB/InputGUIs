@@ -27,7 +27,7 @@ require_once('Services/Form/classes/class.ilFormPropertyGUI.php');
  * @author Fabio Heer <fabio.heer@ilub.unibe.ch>
  * @version $Id$
  */
-class xbgTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
+class ilubTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 
 	const MODE_TEXT_AREA = 'area';
 	const MODE_TEXT_INPUT = 'text';
@@ -57,7 +57,7 @@ class xbgTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 	public function __construct($title, $postvar) {
 		parent::__construct($title, $postvar);
 		$this->setMode(self::MODE_TEXT_INPUT);
-		$this->setLanguageIds(xbgTranslationUtil::getAllLanguageIds());
+		$this->setLanguageIds(ilubTranslationUtil::getAllLanguageIds());
 	}
 
 
@@ -143,7 +143,7 @@ class xbgTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 	public function setValueByArray($values) {
 		$this->initFields();
 
-		foreach (xbgTranslationUtil::getAllLanguageIds() as $language) {
+		foreach (ilubTranslationUtil::getAllLanguageIds() as $language) {
 			/** @var ilTextInputGUI|ilTextAreaInputGUI $input */
 			$input = $this->sub_items[$language];
 			if ($input instanceof ilTextInputGUI OR $input instanceof ilTextAreaInputGUI) {
@@ -220,7 +220,7 @@ class xbgTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 	 */
 	public function setLanguageIds($language_ids) {
 		if (count($language_ids) == 0) {
-			$this->language_ids = xbgTranslationUtil::getAllLanguageIds();
+			$this->language_ids = ilubTranslationUtil::getAllLanguageIds();
 		} else {
 			$this->language_ids = $language_ids;
 		}

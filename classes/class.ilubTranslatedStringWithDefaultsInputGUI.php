@@ -20,10 +20,16 @@
 	| Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. |
 	+-----------------------------------------------------------------------------+
 */
-require_once('Customizing/global/plugins/Libraries/InputGUIs/classes/class.xbgTranslatedStringInputGUI.php');
-require_once('Customizing/global/plugins/Services/Repository/RepositoryObject/Bugeno/classes/Models/class.xbgStdMessage.php');
+require_once('Customizing/global/plugins/Libraries/InputGUIs/classes/class.ilubTranslatedStringInputGUI.php');
 
-class xbgTranslatedStringWithDefaultsInputGUI extends xbgTranslatedStringInputGUI {
+/**
+ * Class ilubTranslatedStringWithDefaultsInputGUI
+ * An text input GUI with fields for multiple languages and the option to load a default message by clicking on a link.
+ *
+ * @author  Fabio Heer <fabio.heer@ilub.unibe.ch>
+ * @version $Id$
+ */
+class ilubTranslatedStringWithDefaultsInputGUI extends ilubTranslatedStringInputGUI {
 
 	/**
 	 * @var xbgTranslatedString
@@ -35,15 +41,21 @@ class xbgTranslatedStringWithDefaultsInputGUI extends xbgTranslatedStringInputGU
 	protected $load_defaults_title;
 
 
-	public function __construct($title, $postvar, $load_defaults_title, xbgTranslatedString $string) {
+	/**
+	 * @param string               $title               the title of the input item
+	 * @param string               $postvar             the post variable name
+	 * @param string               $load_defaults_title the text for the link, which loads the default text when clicked
+	 * @param ilubTranslatedString $default_text        the default texts
+	 */
+	public function __construct($title, $postvar, $load_defaults_title, ilubTranslatedString $default_text) {
 		parent::__construct($title, $postvar);
 		$this->setLoadDefaultsTitle($load_defaults_title);
-		$this->setStandardTranslatedstring($string);
+		$this->setDefaultTranslatedString($default_text);
 	}
 
 
 	/**
-	 * @param string $load_defaults_title
+	 * @param string $load_defaults_title the text for the link, which loads the default text when clicked
 	 */
 	public function setLoadDefaultsTitle($load_defaults_title) {
 		$this->load_defaults_title = $load_defaults_title;
@@ -51,7 +63,7 @@ class xbgTranslatedStringWithDefaultsInputGUI extends xbgTranslatedStringInputGU
 
 
 	/**
-	 * @return string
+	 * @return string the text for the link, which loads the default text when clicked
 	 */
 	public function getLoadDefaultsTitle() {
 		return $this->load_defaults_title;
@@ -59,17 +71,17 @@ class xbgTranslatedStringWithDefaultsInputGUI extends xbgTranslatedStringInputGU
 
 
 	/**
-	 * @param \xbgTranslatedString $string
+	 * @param \ilubTranslatedString $string the default texts
 	 */
-	public function setStandardTranslatedstring($string) {
+	public function setDefaultTranslatedString($string) {
 		$this->standard_translated_string = $string;
 	}
 
 
 	/**
-	 * @return \xbgTranslatedString
+	 * @return \ilubTranslatedString the default texts
 	 */
-	public function getStandardTranslatedstring() {
+	public function getDefaultTranslatedString() {
 		return $this->standard_translated_string;
 	}
 
@@ -83,17 +95,17 @@ class xbgTranslatedStringWithDefaultsInputGUI extends xbgTranslatedStringInputGU
 		parent::insert($a_tpl);
 		iljQueryUtil::initjQuery();
 
-		$translations = $this->getStandardTranslatedstring()->getTranslations();
+		$translations = $this->getDefaultTranslatedString()->getTranslations();
 		foreach ($this->sub_items as $item) {
 			/** @var ilTextInputGUI|ilTextAreaInputGUI $item */
-			$title_tpl = new ilTemplate('Customizing/global/plugins/Libraries/InputGUIs/templates/tpl.xbg_standard_message_input.html', TRUE, TRUE);
+			$title_tpl = new ilTemplate('Customizing/global/plugins/Libraries/InputGUIs/templates/tpl.ilub_translated_string_with_default_text_input.html', TRUE, TRUE);
 			$title_tpl->setVariable('TITLE', $item->getTitle());
-			$title_tpl->setVariable('LINK_ID', 'std_msg_' . $item->getPostVar());
+			$title_tpl->setVariable('LINK_ID', 'default_text_' . $item->getPostVar());
 			$title_tpl->setVariable('LINK_TEXT', $this->getLoadDefaultsTitle());
 			$title_tpl->setVariable('POSTVAR', $item->getPostVar());
 			$lng_key = $this->getLngKey($item->getPostVar());
 			if (array_key_exists($lng_key, $translations)) {
-				$title_tpl->setVariable('STD_MSG', $translations[$lng_key]);
+				$title_tpl->setVariable('DEFAULT_TEXT', $translations[$lng_key]);
 			}
 			$item->setTitle($title_tpl->get());
 		}
