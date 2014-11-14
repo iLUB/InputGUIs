@@ -22,6 +22,7 @@
 */
 
 require_once('Services/Form/classes/class.ilFormPropertyGUI.php');
+require_once('Customizing/global/plugins/Libraries/Translation/class.ilubTranslationUtil.php');
 
 /**
  * @author Fabio Heer <fabio.heer@ilub.unibe.ch>
@@ -48,6 +49,10 @@ class ilubTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 	 * @var array
 	 */
 	protected $rte;
+	/**
+	 * @var bool
+	 */
+	protected $has_fields_initialised = FALSE;
 
 
 	/**
@@ -62,6 +67,7 @@ class ilubTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 
 
 	public function initFields() {
+		$this->setHasFieldsInitialised(TRUE);
 		global $lng;
 		$lng->loadLanguageModule('meta');
 
@@ -134,7 +140,11 @@ class ilubTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 	 *
 	 * @param ilTemplate $a_tpl
 	 */
-	public function insert(&$a_tpl) {}
+	public function insert(&$a_tpl) {
+		if (!$this->hasFieldsInitialised()) {
+			$this->initFields();
+		}
+	}
 
 
 	/**
@@ -147,10 +157,11 @@ class ilubTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 			/** @var ilTextInputGUI|ilTextAreaInputGUI $input */
 			$input = $this->sub_items[$language];
 			if ($input instanceof ilTextInputGUI OR $input instanceof ilTextAreaInputGUI) {
-				if (array_key_exists($this->getPostVar(), $values)
-					AND array_key_exists($language, $values[$this->getPostVar()])) {
-					// Get Values from array (as in entry->translations)
-					$input->setValue($values[$this->getPostVar()][$language]);
+				if (array_key_exists($this->getPostVar(), $values) AND is_array($values[$this->getPostVar()])
+						AND array_key_exists($language, $values[$this->getPostVar()])
+				) {
+						// Get Values from array (as in entry->translations)
+						$input->setValue($values[$this->getPostVar()][$language]);
 				} else if (isset($values[$this->getPostVar() . '_' . $language])) {
 					// Get values from POST (due to ilTextInputGUI limitations arrays are not supported)
 					$input->setValue($values[$this->getPostVar() . '_' . $language]);
@@ -232,5 +243,21 @@ class ilubTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 	 */
 	public function getLanguageIds() {
 		return $this->language_ids;
+	}
+
+
+	/**
+	 * @param boolean $has_fields_initialised
+	 */
+	public function setHasFieldsInitialised($has_fields_initialised) {
+		$this->has_fields_initialised = $has_fields_initialised;
+	}
+
+
+	/**
+	 * @return boolean
+	 */
+	public function hasFieldsInitialised() {
+		return $this->has_fields_initialised;
 	}
 }
