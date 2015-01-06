@@ -205,6 +205,14 @@ class ilubTranslatedStringInputGUI extends ilSubEnabledFormPropertyGUI {
 
 	/**
 	 * Activates RTE support (requires MODE_TEXT_AREA)
+	 *
+	 * The object id and object type are important settings that must be set correctly to allow image upload.
+	 * When uploading images, TinyMCE requires access to the (uploaded) media object via its URL. This causes
+	 * ilWebAccessChecker to check whether the user has read permissions on this object (by using the objects ref_id).
+	 *
+	 * A hack to use RTE in places without ref_ids, e.g. in UIHook plugins, is to set set the object id to '1' and the
+	 * object type to 'tst'. Then ilWebAccessChecker only verifies that the user has read access to the repository.
+	 *
 	 * @param int    $obj_id    Object ID
 	 * @param string $obj_type  Object Type
 	 * @param string $module    ILIAS module
